@@ -12,18 +12,21 @@ else:
 
 VCFHEADER="""
 ##fileformat=VCFv4.2
-##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read depth">
-##FORMAT=<ID=RD,Number=1,Type=Integer,Description="Read depth matching REF">
-##FORMAT=<ID=AD,Number=1,Type=Integer,Description="Read depth matching ALT">
-##FORMAT=<ID=VF,Number=1,Type=Float,Description="Variant Frequence (RD/DP)">
-##FORMAT=<ID=DPP,Number=1,Type=Integer,Description="Read depth positive strand reads">
-##FORMAT=<ID=RDP,Number=1,Type=Integer,Description="Read depth matching REF positive reads">
-##FORMAT=<ID=ADP,Number=1,Type=Integer,Description="Read depth matching ALT positive reads">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Total depth">
+##FORMAT=<ID=RD,Number=1,Type=Integer,Description="Depth matching reference (REF) allele">
+##FORMAT=<ID=AD,Number=1,Type=Integer,Description="Depth matching alternate (ALT) allele">
+##FORMAT=<ID=VF,Number=1,Type=Float,Description="Variant frequence (AD/DP)">
+##FORMAT=<ID=DPP,Number=1,Type=Integer,Description="Depth on postitive strand">
+##FORMAT=<ID=DPN,Number=1,Type=Integer,Description="Depth on negative strand">
+##FORMAT=<ID=RDP,Number=1,Type=Integer,Description="Reference depth on postitive strand">
+##FORMAT=<ID=RDN,Number=1,Type=Integer,Description="Reference depth on negative strand">
+##FORMAT=<ID=ADP,Number=1,Type=Integer,Description="Alternate depth on postitive strand">
+##FORMAT=<ID=ADN,Number=1,Type=Integer,Description="Alternate depth on negative strand">
 """
 
 VCFCOLS="#CHROM  POS ID  REF ALT QUAL    FILTER  INFO    FORMAT".split()
 
-FORMAT="DP:RD:AD:VF:DPP:RDP:ADP"
+FORMAT="DP:RD:AD:VF:DPP:DPN:RDP:RDN:ADP:ADN"
 formatFields=FORMAT.split(":")
 
 with open(outVcf,"w") as outfp:
@@ -50,8 +53,11 @@ with open(outVcf,"w") as outfp:
             for si in samples:
                 gt=[]
                 sampleDat=dict([x.split("=") for x in r[si].split(";")])
+                sampleDat["DPN"]=int(sampleDat["DP"])-int(sampleDat["DPP"])
+                sampleDat["RDN"]=int(sampleDat["RD"])-int(sampleDat["RDP"])
+                sampleDat["ADN"]=int(sampleDat["AD"])-int(sampleDat["ADP"])
                 for fi in formatFields:
                     gt.append(sampleDat[fi])
-                out.append(":".join(gt))
+                out.append(":".join(map(str,gt)))
 
             print >>outfp, "\t".join(out)
