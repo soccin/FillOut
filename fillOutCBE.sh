@@ -4,7 +4,7 @@ SDIR="$( cd "$( dirname "$0" )" && pwd )"
 
 BAMDIR=$1
 BAMDIR=$(echo $BAMDIR | sed 's/\/$//')
-MAF=$2
+EVENTS=$2
 OUT=$3
 
 # Detect genome build
@@ -22,6 +22,14 @@ echo "Loading genome [${GENOME_BUILD}]" $GENOME_SH
 source $GENOME_SH
 echo GENOME=$GENOME
 
+if [[ $EVENTS =~ \.vcf ]]; then
+    EVENT_INPUT="--vcf $EVENTS"
+    EVENT_TYPE="VCF"
+else
+    EVENT_INPUT="--maf $EVENTS"
+    EVENT_TYPE="MAF"
+fi
+
 INPUTS=$(ls $BAMDIR/*bam \
 	| perl -ne 'chomp; m|_indelRealigned_recal_(\S+).bam|;print "--bam ",$1,":",$_,"\n"')
 
@@ -30,9 +38,13 @@ TMPFILE=$(uuidgen)
 $SDIR/GetBaseCountsMultiSample \
     --thread 32 \
 	--filter_improper_pair 0 --fasta $GENOME \
-	--maf $MAF \
+	$EVENT_INPUT \
 	--output $TMPFILE \
 	$INPUTS
 
-$SDIR/cvtGBCMS2VCF.py $TMPFILE $OUT
-rm $TMPFILE
+if [ "$EVENT_TYPE" == "MAF" ];
+    $SDIR/cvtGBCMS2VCF.py $TMPFILE $OUT
+    rm $TMPFILE
+else
+    mv $TMPFILE $OUT
+fi
