@@ -42,7 +42,7 @@ $SDIR/GetBaseCountsMultiSample \
 	--output $TMPFILE \
 	$INPUTS
 
-if [ "$EVENT_TYPE" == "MAF" ];
+if [ "$EVENT_TYPE" == "MAF" ]; then
     $SDIR/cvtGBCMS2VCF.py $TMPFILE $OUT
     rm $TMPFILE
 else
