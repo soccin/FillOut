@@ -7,7 +7,7 @@ The following should be allowable inputs
 * Valid VCF. Should accept both a full VCF (9 cols + samples) and a genotype free VCF with just the 8 columns
 
 COL | NAME
--|-
+--|--
 1| #CHROM
 2| POS
 3| ID
