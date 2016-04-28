@@ -6,16 +6,16 @@ The following should be allowable inputs
 
 * Valid VCF. Should accept both a full VCF (9 cols + samples) and a genotype free VCF with just the 8 columns
 
-COL | NAME
---|--
-1| #CHROM
-2| POS
-3| ID
-4| REF
-5| ALT
-6| QUAL
-7| FILTER
-8| INFO
+  COL|NAME
+  --|--
+  1| #CHROM
+  2| POS
+  3| ID
+  4| REF
+  5| ALT
+  6| QUAL
+  7| FILTER
+  8| INFO
 
 * TCGA MAF (see TCGA spec)
 
