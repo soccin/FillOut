@@ -33,10 +33,11 @@ fi
 INPUTS=$(ls $BAMDIR/*bam \
 	| perl -ne 'chomp; m|_indelRealigned_recal_(\S+).bam|;print "--bam ",$1,":",$_,"\n"')
 
-TMPFILE=$(uuidgen)
+TMPFILE=_fill_$(uuidgen)
+echo $TMPFILE
 
 $SDIR/GetBaseCountsMultiSample \
-    --thread 32 \
+    --thread 24 \
 	--filter_improper_pair 0 --fasta $GENOME \
 	$EVENT_INPUT \
 	--output $TMPFILE \
@@ -44,7 +45,7 @@ $SDIR/GetBaseCountsMultiSample \
 
 if [ "$EVENT_TYPE" == "MAF" ]; then
     $SDIR/cvtGBCMS2VCF.py $TMPFILE $OUT
-    rm $TMPFILE
+    #rm $TMPFILE
 else
     mv $TMPFILE $OUT
 fi
