@@ -2,12 +2,10 @@
 
 ## INPUT:
 
-The following should be allowable inputs
+The following should be allowable inputs:
 
-* Valid VCF. Should accept both a full VCF (9 cols + samples) and a genotype free VCF with just the 8 columns
+Valid VCF. Should accept both a full VCF (9 cols + samples) and a genotype free VCF with just the 8 columns
 
-VCF Columns
-  
   COL|NAME
   --|--
   1| #CHROM
@@ -20,7 +18,7 @@ VCF Columns
   8| INFO
 
 
-* TCGA MAF (see TCGA spec)
+TCGA MAF (see TCGA spec)
 
 ## Output:
 
