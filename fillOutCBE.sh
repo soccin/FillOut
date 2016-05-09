@@ -2,6 +2,13 @@
 
 SDIR="$( cd "$( dirname "$0" )" && pwd )"
 
+if [ $# -lt 3 ]; then
+    echo
+    echo "  usage: fillOutCBE.sh BAMDIR EVENTS.[MAF|VCF] OUTPUT_FILE"
+    echo
+    exit
+fi
+
 BAMDIR=$1
 BAMDIR=$(echo $BAMDIR | sed 's/\/$//')
 EVENTS=$2
