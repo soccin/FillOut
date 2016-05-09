@@ -43,7 +43,7 @@ INPUTS=$(ls $BAMDIR/*bam \
 TMPFILE=_fill_$(uuidgen)
 echo $TMPFILE
 
-$SDIR/GetBaseCountsMultiSample \
+$SDIR/bin/GetBaseCountsMultiSample \
     --thread 24 \
 	--filter_improper_pair 0 --fasta $GENOME \
 	$EVENT_INPUT \
