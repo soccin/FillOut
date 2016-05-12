@@ -29,6 +29,8 @@ VCFCOLS="#CHROM  POS ID  REF ALT QUAL    FILTER  INFO    FORMAT".split()
 FORMAT="DP:RD:AD:VF:DPP:DPN:RDP:RDN:ADP:ADN"
 formatFields=FORMAT.split(":")
 
+eventsSeen=set()
+
 with open(outVcf,"w") as outfp:
     print >>outfp, VCFHEADER.strip()
 
@@ -38,6 +40,14 @@ with open(outVcf,"w") as outfp:
         print >>outfp, "\t".join(VCFCOLS+samples)
 
         for r in cin:
+
+            # DeDup MAF based fillOut output
+
+            key=(r["Chrom"],r["Start"],r["Ref"],r["Alt"])
+            if key in eventsSeen:
+                continue
+            eventsSeen.add(key)
+
             out=[
                 r["Chrom"],
                 r["Start"],
@@ -49,6 +59,7 @@ with open(outVcf,"w") as outfp:
                 ".",
                 FORMAT
                 ]
+
 
             for si in samples:
                 gt=[]
