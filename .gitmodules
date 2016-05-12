@@ -1,0 +1,3 @@
+[submodule "GenomeData"]
+	path = GenomeData
+	url = git@github.com:soccin/GenomeData.git
