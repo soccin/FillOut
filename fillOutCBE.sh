@@ -16,10 +16,10 @@ OUT=$3
 
 # Detect genome build
 BAM1=$(ls $BAMDIR/*bam | head -1)
-GENOME_BUILD=$($SDIR/getGenomeBuild.sh $BAM1)
+GENOME_BUILD=$($SDIR/GenomeData/getGenomeBuildBAM.sh $BAM1)
 echo BUILD=$GENOME_BUILD
 
-GENOME_SH=$SDIR/genomeInfo_${GENOME_BUILD}.sh
+GENOME_SH=$SDIR/GenomeData/genomeInfo_${GENOME_BUILD}.sh
 if [ ! -e "$GENOME_SH" ]; then
     echo "Unknown genome build ["${GENOME_BUILD}"]"
     exit
