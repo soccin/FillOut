@@ -2,15 +2,36 @@
 
 SDIR="$( cd "$( dirname "$0" )" && pwd )"
 
-if [ $# -lt 3 ]; then
+function usage {
     echo
-    echo "  usage: fillOutCBE.sh [BAMDIR|BAMLIST] EVENTS.[MAF|VCF] OUTPUT_FILE"
+    echo "  usage: fillOutCBE.sh [-v|-m] (BAMDIR|BAMLIST) EVENTS OUTPUT_FILE"
     echo
     echo BAMDIR = Directory with BAM files. Will process all
     echo BAMLIST = File with paths to BAM files, one per line
     echo
+}
+
+if [ $# -lt 3 ]; then
+    usage
     exit
 fi
+
+EVENT_TYPE="UNK"
+while getopts "vm" opt; do
+    case $opt in
+        v)
+        EVENT_TYPE="VCF";
+        ;;
+        m)
+        EVENT_TYPE="MAF"
+        ;;
+        \?)
+        usage
+        exit
+        ;;
+    esac
+done
+shift $((OPTIND-1))
 
 ARG1=$1
 UUID=$(uuidgen)
@@ -48,19 +69,14 @@ echo GENOME=$GENOME
 # Determine the type of the EVENT file
 #
 
-HEAD1=$(head -1 $FILE)
-if [[ "$HEAD1" =~ "fileformat=VCF" ]]; then
+echo EVENTS=$EVENTS
 
-    EVENT_TYPE="VCF"
-
-elif [[ $EVENTS =~ \.vcf ]]; then
-
-    EVENT_TYPE="VCF"
-
-else
-
-    EVENT_TYPE="MAF"
-
+if [[ "$EVENT_TYPE" == "UNK" ]]; then
+    if [[ $EVENTS =~ \.vcf ]]; then
+        EVENT_TYPE="VCF"
+    else
+        EVENT_TYPE="MAF"
+    fi
 fi
 
 if [[ "$EVENT_TYPE" == "VCF" ]]; then
