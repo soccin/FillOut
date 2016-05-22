@@ -12,7 +12,6 @@ if [ $# -lt 3 ]; then
     exit
 fi
 
-
 ARG1=$1
 UUID=$(uuidgen)
 BAMDIR=""
