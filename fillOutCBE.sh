@@ -44,12 +44,38 @@ echo "Loading genome [${GENOME_BUILD}]" $GENOME_SH
 source $GENOME_SH
 echo GENOME=$GENOME
 
-if [[ $EVENTS =~ \.vcf ]]; then
-    EVENT_INPUT="--vcf $EVENTS"
+#
+# Determine the type of the EVENT file
+#
+
+HEAD1=$(head -1 $FILE)
+if [[ "$HEAD1" =~ "fileformat=VCF" ]]; then
+
     EVENT_TYPE="VCF"
+
+elif [[ $EVENTS =~ \.vcf ]]; then
+
+    EVENT_TYPE="VCF"
+
 else
-    EVENT_INPUT="--maf $EVENTS"
+
     EVENT_TYPE="MAF"
+
+fi
+
+if [[ "$EVENT_TYPE" == "VCF" ]]; then
+
+    EVENT_INPUT="--vcf $EVENTS"
+
+elif [[ "$EVENT_TYPE" == "MAF" ]]; then
+
+    EVENT_INPUT="--maf $EVENTS"
+
+else
+
+    echo "Unknown EVENT_TYPE =["$EVENT_TYPE"]"
+    exit 1
+
 fi
 
 INPUTS=$(
