@@ -105,6 +105,7 @@ echo $TMPFILE
 
 $SDIR/bin/GetBaseCountsMultiSample \
     --thread 8 \
+    --fragment_count 1 \
 	--filter_improper_pair 0 --fasta $GENOME \
 	$EVENT_INPUT \
 	--output $TMPFILE \
