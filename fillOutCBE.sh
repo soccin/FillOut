@@ -104,7 +104,7 @@ TMPFILE=_fill_$UUID
 echo $TMPFILE
 
 $SDIR/bin/GetBaseCountsMultiSample \
-    --thread 24 \
+    --thread 8 \
 	--filter_improper_pair 0 --fasta $GENOME \
 	$EVENT_INPUT \
 	--output $TMPFILE \
