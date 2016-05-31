@@ -105,11 +105,12 @@ echo $TMPFILE
 
 $SDIR/bin/GetBaseCountsMultiSample \
     --thread 8 \
+    --suppress_warning 3 \
     --fragment_count 1 \
-	--filter_improper_pair 0 --fasta $GENOME \
-	$EVENT_INPUT \
-	--output $TMPFILE \
-	$INPUTS
+    --filter_improper_pair 0 --fasta $GENOME \
+    $EVENT_INPUT \
+    --output $TMPFILE \
+    $INPUTS
 
 if [ "$EVENT_TYPE" == "MAF" ]; then
     $SDIR/cvtGBCMS2VCF.py $TMPFILE $OUT
