@@ -1,6 +1,7 @@
 #!/bin/bash
 
 SDIR="$( cd "$( dirname "$0" )" && pwd )"
+SAMTOOLS=/opt/common/CentOS_6-dev/bin/current/samtools
 
 function usage {
     echo
@@ -94,11 +95,34 @@ else
 
 fi
 
-INPUTS=$(
+NUM_SAMPLENAMES=$(
     for bam in $(cat $BAMLIST); do
-        sample=$(samtools view -H $bam | fgrep "@RG" | head -1 | perl -ne 'm/SM:(\S+)/;print $1');
-        echo "--bam" ${sample}:$bam; done
-    )
+        sample=$($SAMTOOLS view -H $bam | fgrep "@RG" | head -1 | perl -ne 'm/SM:(\S+)/;print $1');
+        echo ${sample};
+    done | sort | uniq | wc -l
+)
+
+NUM_BAMS=$(cat $BAMLIST | wc -l)
+
+if [ "$NUM_SAMPLENAMES" == "$NUM_BAMS" ]; then
+
+    INPUTS=$(
+        for bam in $(cat $BAMLIST); do
+            sample=$($SAMTOOLS view -H $bam | fgrep "@RG" | head -1 | perl -ne 'm/SM:(\S+)/;print $1');
+            echo "--bam" ${sample}:$bam; done
+        )
+
+else
+
+    # For people who do not set the SM: TAG uniquly for all BAMs use the
+    # File name for the samplename
+
+    INPUTS=$(
+        for bam in $(cat $BAMLIST); do
+            echo "--bam" $(basename $bam | sed 's/.bam//'):$bam; done
+        )
+
+fi
 
 TMPFILE=_fill_$UUID
 echo $TMPFILE
