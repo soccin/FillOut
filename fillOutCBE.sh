@@ -59,7 +59,7 @@ echo BUILD=$GENOME_BUILD
 GENOME_SH=$SDIR/GenomeData/genomeInfo_${GENOME_BUILD}.sh
 if [ ! -e "$GENOME_SH" ]; then
     echo "Unknown genome build ["${GENOME_BUILD}"]"
-    exit
+    exit 1
 fi
 
 echo "Loading genome [${GENOME_BUILD}]" $GENOME_SH
