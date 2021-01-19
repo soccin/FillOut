@@ -1,7 +1,11 @@
 #!/bin/bash
 
 SDIR="$( cd "$( dirname "$0" )" && pwd )"
-SAMTOOLS=/opt/common/CentOS_6-dev/bin/current/samtools
+SAMTOOLS=$(which samtools)
+if [ $SAMTOOLS == "" ]; then
+    echo samtools not in current path
+    exit -1
+fi
 
 function usage {
     echo
