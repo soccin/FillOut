@@ -108,6 +108,8 @@ NUM_SAMPLENAMES=$(
 
 NUM_BAMS=$(cat $BAMLIST | wc -l)
 
+#echo NUM_BAMS=$NUM_BAMS
+
 if [ "$NUM_SAMPLENAMES" == "$NUM_BAMS" ]; then
 
     INPUTS=$(
@@ -127,6 +129,8 @@ else
         )
 
 fi
+
+#echo $INPUTS | tee inputs_fillout
 
 TMPFILE=_fill_$UUID
 echo $TMPFILE
