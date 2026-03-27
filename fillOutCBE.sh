@@ -22,13 +22,22 @@ if [ $# -lt 3 ]; then
 fi
 
 EVENT_TYPE="UNK"
-while getopts "vm" opt; do
+MAPQ=20
+BASEQ=0
+
+while getopts "vmQ:B:" opt; do
     case $opt in
         v)
         EVENT_TYPE="VCF";
         ;;
         m)
         EVENT_TYPE="MAF"
+        ;;
+        Q)
+        MAPQ=$OPTARG
+        ;;
+        B)
+        BASEQ=$OPTARG
         ;;
         \?)
         usage
@@ -37,6 +46,10 @@ while getopts "vm" opt; do
     esac
 done
 shift $((OPTIND-1))
+
+
+echo MAPQ=$MAPQ
+echo BASEQ=$BASEQ
 
 ARG1=$1
 UUID=$(uuidgen)
@@ -135,8 +148,14 @@ fi
 TMPFILE=_fill_$UUID
 echo $TMPFILE
 
+GBMC_VERSION=$($SDIR/bin/GetBaseCountsMultiSample | fgrep GetBaseCounts | awk '{print $2}')
+
+echo "GetBaseCountsMultiSample version ${GBMC_VERSION}"
+
 $SDIR/bin/GetBaseCountsMultiSample \
     --thread 24 \
+    --maq $MAPQ \
+    --baq $BASEQ \
     --suppress_warning 3 \
     --fragment_count 1 \
     --filter_improper_pair 0 --fasta $GENOME \
