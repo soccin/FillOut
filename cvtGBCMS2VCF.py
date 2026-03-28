@@ -1,4 +1,4 @@
-#!/opt/common/CentOS_6-dev/bin/current/python2.7
+#!/usr/bin/env python3
 
 import sys
 import csv
@@ -32,12 +32,12 @@ formatFields=FORMAT.split(":")
 eventsSeen=set()
 
 with open(outVcf,"w") as outfp:
-    print >>outfp, VCFHEADER.strip()
+    print(VCFHEADER.strip(), file=outfp)
 
     with open(gbcmsFile) as fp:
         cin=csv.DictReader(fp,delimiter="\t")
         samples=cin.fieldnames[34:]
-        print >>outfp, "\t".join(VCFCOLS+samples)
+        print("\t".join(VCFCOLS+samples), file=outfp)
 
         for r in cin:
 
@@ -71,4 +71,4 @@ with open(outVcf,"w") as outfp:
                     gt.append(sampleDat[fi])
                 out.append(":".join(map(str,gt)))
 
-            print >>outfp, "\t".join(out)
+            print("\t".join(out), file=outfp)

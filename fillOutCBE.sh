@@ -1,18 +1,33 @@
 #!/bin/bash
 
 SDIR="$( cd "$( dirname "$0" )" && pwd )"
-SAMTOOLS=$(which samtools)
-if [ $SAMTOOLS == "" ]; then
-    echo samtools not in current path
-    exit -1
-fi
+module load samtools
 
 function usage {
     echo
-    echo "  usage: fillOutCBE.sh [-v|-m] (BAMDIR|BAMLIST) EVENTS OUTPUT_FILE"
+    echo "  usage: fillOutCBE.sh [-v|-m] [-Q MAPQ] [-B BASEQ] (BAMDIR|BAMLIST) EVENTS OUTPUT_FILE"
     echo
-    echo BAMDIR = Directory with BAM files. Will process all
-    echo BAMLIST = File with paths to BAM files, one per line
+    echo "  Fill out variant positions in EVENTS with read-depth counts from"
+    echo "  one or more BAM files.  Output is always a multi-sample VCF with"
+    echo "  FORMAT fields: DP, RD, AD, VF, DPP, DPN, RDP, RDN, ADP, ADN."
+    echo
+    echo "  Arguments:"
+    echo "    BAMDIR    Directory of BAM files; all *.bam files are used"
+    echo "    BAMLIST   Plain-text file listing BAM paths, one per line"
+    echo "    EVENTS    Input variant file (VCF or MAF)"
+    echo "    OUTPUT    Output VCF file path"
+    echo
+    echo "  Options:"
+    echo "    -v        Force VCF input (default: auto-detect from extension)"
+    echo "    -m        Force MAF input (default: auto-detect from extension)"
+    echo "    -Q MAPQ   Minimum mapping quality to count a read (default: 20)"
+    echo "    -B BASEQ  Minimum base quality to count a read  (default: 0)"
+    echo
+    echo "  Sample names are taken from BAM @RG SM: tags.  If SM tags are"
+    echo "  not unique across all BAMs, the BAM filename (minus .bam) is"
+    echo "  used as the sample name instead."
+    echo
+    echo "  The genome build is auto-detected from the first BAM header."
     echo
 }
 
@@ -114,7 +129,7 @@ fi
 
 NUM_SAMPLENAMES=$(
     for bam in $(cat $BAMLIST); do
-        sample=$($SAMTOOLS view -H $bam | fgrep "@RG" | head -1 | perl -ne 'm/SM:(\S+)/;print $1');
+        sample=$(samtools view -H $bam | fgrep "@RG" | head -1 | perl -ne 'm/SM:(\S+)/;print $1');
         echo ${sample};
     done | sort | uniq | wc -l
 )
@@ -127,7 +142,7 @@ if [ "$NUM_SAMPLENAMES" == "$NUM_BAMS" ]; then
 
     INPUTS=$(
         for bam in $(cat $BAMLIST); do
-            sample=$($SAMTOOLS view -H $bam | fgrep "@RG" | head -1 | perl -ne 'm/SM:(\S+)/;print $1');
+            sample=$(samtools view -H $bam | fgrep "@RG" | head -1 | perl -ne 'm/SM:(\S+)/;print $1');
             echo "--bam" ${sample}:$bam; done
         )
 
