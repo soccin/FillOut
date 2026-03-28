@@ -65,7 +65,7 @@ maf |>
     # Keep the 29 standard MAF columns plus any tumor/normal count
     # columns added by the fill-out step (t_ref_count, t_alt_count,
     # n_ref_count, n_alt_count, etc.).
-    select(1:29, matches("^[tn]_.*_count$")) |>
+    select(1:29, matches("^[tn]_.*_count$"),matches("^HGVS")) |>
     # Drop duplicate variants -- same position & alleles get one row.
     # .keep_all = TRUE means we keep every selected column, not just
     # the key columns used for deduplication.

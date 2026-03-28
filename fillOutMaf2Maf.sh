@@ -61,6 +61,10 @@ ARG1=$1
 UUID=$(uuidgen)
 BAMDIR=""
 
+TMPMIN=_minMaf_${UUID}.maf
+TMPFILL=_fill_${UUID}.maf
+TMPANNO=_fill_${UUID}.annote.maf
+
 if [ -d "$ARG1" ]; then
     BAMDIR=$1
     BAMDIR=$(echo $BAMDIR | sed 's/\/$//')
@@ -104,7 +108,12 @@ echo GENOME=$GENOME
 #
 
 echo EVENTS=$EVENTS
-EVENT_INPUT="--maf $EVENTS"
+
+# Pre-step: trim input MAF to minimal columns for GBCMS
+echo "Pre-processing: minimizing input MAF"
+Rscript $SDIR/R/makeMinimalMaf.R $EVENTS $TMPMIN
+
+EVENT_INPUT="--maf $TMPMIN"
 
 NUM_SAMPLENAMES=$(
     for bam in $(cat $BAMLIST); do
@@ -150,8 +159,17 @@ $SDIR/bin/GetBaseCountsMultiSample \
     --filter_improper_pair 0 --fasta $GENOME \
     $EVENT_INPUT \
     --omaf \
-    --output $OUT \
+    --output $TMPFILL \
     $INPUTS
+
+# Post-step: annotate filled MAF with columns from the minimal MAF
+echo "Post-processing: annotating filled MAF"
+Rscript $SDIR/R/annoteMaf.R $TMPFILL $TMPMIN
+mv $TMPANNO $OUT
+
+rm -f $TMPMIN $TMPFILL $TMPANNO
+
+Rscript $SDIR/R/fillOutReport.R $OUT
 
 if [ "$BAMDIR" ]; then
     rm $BAMLIST
