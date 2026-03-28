@@ -5,7 +5,7 @@ module load samtools
 
 function usage {
     echo
-    echo "  usage: fillOutCBE.sh [-Q MAPQ] [-B BASEQ] (BAMDIR|BAMLIST) EVENTS OUTPUT_FILE"
+    echo "  usage: fillOutMaf2Maf.sh [-Q MAPQ] [-B BASEQ] (BAMDIR|BAMLIST) EVENTS OUTPUT.maf"
     echo
     echo "  Fill out variant positions in EVENTS with read-depth counts from"
     echo "  one or more BAM files.  Output is always a multi-sample MAF"
@@ -73,6 +73,16 @@ fi
 
 EVENTS=$2
 OUT=$3
+
+if [ ! -f $EVENTS ]; then
+    echo "ERROR: input MAF not found: $EVENTS"
+    exit 1
+fi
+
+if [ -e $OUT ]; then
+    echo "ERROR: output file already exists: $OUT"
+    exit 1
+fi
 
 # Detect genome build
 BAM1=$(head -1 $BAMLIST)
